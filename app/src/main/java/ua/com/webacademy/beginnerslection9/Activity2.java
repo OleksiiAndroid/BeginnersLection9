@@ -1,12 +1,12 @@
 package ua.com.webacademy.beginnerslection9;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class Activity2 extends AppCompatActivity {
 
@@ -15,20 +15,20 @@ public class Activity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
 
-        GridView gridView = (GridView) findViewById(R.id.gridView);
+        ListView listView = findViewById(R.id.listView);
 
-        final String[] arr = new String[]{"a", "b", "c", "d", "e", "f", "g"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, arr);
+        DataBaseHelper DBHelper = new DataBaseHelper(this);
+        SQLiteDatabase db = DBHelper.getWritableDatabase();
 
-        gridView.setAdapter(adapter);
+        Cursor studentsCursor = db.query(Student.TABLE_NAME, null, null, null, null, null, null);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String str = arr[position];
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,
+                android.R.layout.simple_list_item_2,
+                studentsCursor,
+                new String[]{Student.COLUMN_FIRST_NAME, Student.COLUMN_LAST_NAME},
+                new int[]{android.R.id.text1, android.R.id.text2});
 
-                Toast.makeText(Activity2.this, str, Toast.LENGTH_SHORT).show();
-            }
-        });
+        listView.setAdapter(adapter);
     }
 }
